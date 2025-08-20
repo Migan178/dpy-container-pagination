@@ -4,14 +4,12 @@ import discord
 from discord.ext import commands
 
 
-class Simple(discord.ui.View):
+class Simple(discord.ui.ActionRow):
     """
     Embed Paginator.
 
     Parameters:
     ----------
-    timeout: int
-        How long the Paginator should timeout in, after the last interaction. (In seconds) (Overrides default of 60)
     PreviousButton: discord.ui.Button
         Overrides default previous button.
     NextButton: discord.ui.Button
@@ -25,7 +23,6 @@ class Simple(discord.ui.View):
     """
 
     def __init__(self, *,
-                 timeout: int = 60,
                  PreviousButton: discord.ui.Button = discord.ui.Button(emoji=discord.PartialEmoji(name="\U000025c0")),
                  NextButton: discord.ui.Button = discord.ui.Button(emoji=discord.PartialEmoji(name="\U000025b6")),
                  PageCounterStyle: discord.ButtonStyle = discord.ButtonStyle.grey,
@@ -45,9 +42,9 @@ class Simple(discord.ui.View):
         self.page_counter = None
         self.total_page_count = None
 
-        super().__init__(timeout=timeout)
+        super().__init__()
 
-    async def start(self, ctx: discord.Interaction|commands.Context, pages: list[discord.Embed]):
+    async def start(self, ctx: discord.Interaction|commands.Context, pages: list[discord.ui.Container]):
         
         if isinstance(ctx, discord.Interaction):
             ctx = await commands.Context.from_interaction(ctx)
@@ -68,7 +65,10 @@ class Simple(discord.ui.View):
         self.add_item(self.page_counter)
         self.add_item(self.NextButton)
 
-        self.message = await ctx.send(embed=self.pages[self.InitialPage], view=self, ephemeral=self.ephemeral)
+        for page in self.pages:
+            page.add_item(self)
+
+        self.message = await ctx.send(view=discord.ui.LayoutView().add_item(self.pages[self.InitialPage]), ephemeral=self.ephemeral)
 
     async def previous(self):
         if self.current_page == 0:
@@ -77,7 +77,8 @@ class Simple(discord.ui.View):
             self.current_page -= 1
 
         self.page_counter.label = f"{self.current_page + 1}/{self.total_page_count}"
-        await self.message.edit(embed=self.pages[self.current_page], view=self)
+
+        await self.message.edit(view=discord.ui.LayoutView().add_item(self.pages[self.InitialPage]))
 
     async def next(self):
         if self.current_page == self.total_page_count - 1:
@@ -86,7 +87,8 @@ class Simple(discord.ui.View):
             self.current_page += 1
 
         self.page_counter.label = f"{self.current_page + 1}/{self.total_page_count}"
-        await self.message.edit(embed=self.pages[self.current_page], view=self)
+
+        await self.message.edit(view=discord.ui.LayoutView().add_item(self.pages[self.InitialPage]))
 
     async def next_button_callback(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author and self.AllowExtInput:

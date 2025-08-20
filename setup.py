@@ -4,16 +4,16 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
-    name="discord.py-pagination",
-    version="0.0.5",
-    description="Easily create pagination for your embeds.",
+    name="dpy-container-pagination",
+    version="0.1.0",
+    description="Easily create pagination for your containers.",
     long_description=long_description,
     long_description_content_type='text/markdown',
     py_modules=["Paginator"],
     package_dir={'': "src"},
-    url="https://github.com/soosBot-com/Pagination",
-    author="soosBot",
-    author_email="support@soosbot.com",
+    url="https://github.com/Migan178/dpy-container-pagination",
+    author="Migan178",
+    author_email="me@migan.co.kr",
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
