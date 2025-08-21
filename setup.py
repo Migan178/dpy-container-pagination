@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="dpy-container-pagination",
-    version="0.1.0",
+    version="0.1.1",
     description="Easily create pagination for your containers.",
     long_description=long_description,
     long_description_content_type='text/markdown',
